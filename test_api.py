@@ -1,4 +1,4 @@
-import os, base64, time, sys
+import os, re, base64, time, sys
 import requests
 from dotenv import load_dotenv
 load_dotenv()
@@ -6,6 +6,15 @@ EMAIL     = os.getenv("JIRA_EMAIL")
 TOKEN     = os.getenv("JIRA_API_TOKEN")
 BASE_URL  = os.getenv("JIRA_BASE_URL", "https://yourcompany.atlassian.net/rest/api/3")  # placeholder default — set JIRA_BASE_URL in .env
 PROJECT_KEY = os.getenv("JIRA_PROJECT_KEY", "IT")  # generic example project key — change via JIRA_PROJECT_KEY in .env
+
+if not EMAIL or not TOKEN:
+    sys.exit("Set JIRA_EMAIL and JIRA_API_TOKEN in your .env before running.")
+
+# Restrict the project key to a safe identifier so it can't inject extra JQL
+# clauses when interpolated below (keys are alphanumeric/underscore, e.g. "IT").
+if not re.fullmatch(r"[A-Za-z0-9_]+", PROJECT_KEY):
+    sys.exit(f"Invalid JIRA_PROJECT_KEY '{PROJECT_KEY}': use letters, digits, or underscores only.")
+
 creds     = base64.b64encode(f"{EMAIL}:{TOKEN}".encode()).decode()
 session   = requests.Session()
 session.headers.update({"Authorization": f"Basic {creds}", "Content-Type": "application/json", "Accept": "application/json"})

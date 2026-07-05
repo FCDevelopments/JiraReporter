@@ -1,6 +1,7 @@
 # jira_fetcher.ps1 - Jira data fetcher using PowerShell Invoke-RestMethod
-# Replaces jira_fetcher.py when Windows Defender blocks Python HTTP connections.
-# PowerShell is a trusted Windows component and is not flagged by Defender.
+# A PowerShell-native alternative to jira_fetcher.py: use this variant when your
+# environment's endpoint-protection policy interferes with the Python HTTP client.
+# Same requests, just made through Invoke-RestMethod instead.
 # Outputs: jira_report.csv, jira_approaching.csv, jira_report_metadata.json
 
 [CmdletBinding()]

@@ -161,7 +161,9 @@ def build_html(tickets, metadata):
     for t in top_tickets:
         key     = html.escape(t["ticket_key"])
         summary = html.escape(t["summary"])
-        link    = browse_url(t["ticket_key"])
+        # Escape for the href attribute context too — the ticket key flows into
+        # the URL, so quote it to prevent attribute-breakout / injection.
+        link    = html.escape(browse_url(t["ticket_key"]), quote=True)
         days_r  = t["days_since_response"]
         days_o  = t["days_open"]
         resp_color = "#dc2626" if days_r >= MIN_DAYS_OPEN else "#374151"
